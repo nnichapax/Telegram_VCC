@@ -274,7 +274,7 @@ async function getMemberReport() {
 
 // ==========================================
 // Export Functions
-// ==========================================
+// =========================================
 module.exports = {
     pool,
     findMemberById,

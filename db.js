@@ -200,7 +200,7 @@ async function findExpiringMembers() {
             AND DATEDIFF(
                 DATE(memberExpireDate),
                 CURDATE()
-                ) BETWEEN 0 AND 30
+                ) BETWEEN 1 AND 30
 
         ORDER BY memberExpireDate ASC
         `
@@ -238,10 +238,10 @@ async function getMemberReport() {
             SUM(
                 CASE
                     WHEN memberExpireDate >= CURDATE()
-                     AND DATEDIFF(
+                    AND DATEDIFF(
                             DATE(memberExpireDate),
                             CURDATE()
-                         ) BETWEEN 0 AND 30
+                        ) BETWEEN 0 AND 30
                     THEN 1
                     ELSE 0
                 END

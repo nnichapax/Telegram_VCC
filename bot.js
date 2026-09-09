@@ -71,7 +71,7 @@ function showMainMenu(ctx) {
                         { text: "🔔 การแจ้งเตือน" },
                         { text: "ℹ️ เกี่ยวกับระบบ" }
                     ]
-
+                    
                 ],
 
                 resize_keyboard: true
@@ -573,7 +573,7 @@ bot.hears("🔔 ส่งการแจ้งเตือน", async (ctx) => {
 
     try {
 
-        const members = await findMembersForNotification();
+        const members = await findExpiringMembers();
 
         if (members.length === 0) {
             return ctx.reply(
@@ -587,7 +587,9 @@ bot.hears("🔔 ส่งการแจ้งเตือน", async (ctx) => {
 
         for (const member of members) {
 
-            const message = `
+            try {
+
+                const message = `
 🔔 แจ้งเตือนวันหมดอายุสมาชิก
 
 👤 ชื่อ: ${member.ownerName}
@@ -598,14 +600,28 @@ bot.hears("🔔 ส่งการแจ้งเตือน", async (ctx) => {
 
 ⏳ เหลือเวลาอีก ${member.daysRemaining} วัน
 
-กรุณาติดต่อผู้ดูแลระบบเพื่อดำเนินการต่ออายุสมาชิก
-            `;
+⚠️ สมาชิกของคุณใกล้หมดอายุแล้ว
 
-            try {
+กรุณาดำเนินการต่ออายุสมาชิก
+เพื่อให้สามารถใช้งานระบบได้อย่างต่อเนื่อง
+
+👇 กดปุ่มด้านล่างเพื่อเข้าสู่ระบบ
+และดำเนินการต่ออายุสมาชิก
+`;
 
                 await bot.api.sendMessage({
                     chat_id: member.Telegram_ID,
-                    text: message
+                    text: message,
+                    reply_markup: {
+                        inline_keyboard: [
+                            [
+                                {
+                                    text: "🔄 ต่ออายุสมาชิก",
+                                    url: "https://smartvillageiot.xyz/frontend/login/login.html"
+                                }
+                            ]
+                        ]
+                    }
                 });
 
                 sentCount++;
@@ -749,56 +765,6 @@ bot.hears("📝 ลงทะเบียน Telegram", async (ctx) => {
 });
 
 // ==============================
-// TEST: ตรวจสอบสมาชิกที่ต้องแจ้งเตือน
-// ==============================
-
-bot.command("testnotify", async (ctx) => {
-
-    try {
-
-        const members = await findMembersForNotification();
-
-        console.log("========== NOTIFICATION TEST ==========");
-        console.log("Members:", members);
-        console.log("=======================================");
-
-        if (members.length === 0) {
-
-            return ctx.reply(
-                "🔔 ตอนนี้ไม่มีสมาชิกที่เข้าเงื่อนไขแจ้งเตือน"
-            );
-
-        }
-
-        let message = "🔔 สมาชิกที่ต้องแจ้งเตือน\n\n";
-
-        members.forEach((member, index) => {
-
-            message +=
-                `${index + 1}. ${member.ownerName}\n` +
-                `🆔 รหัสสมาชิก: ${member.id}\n` +
-                `🏠 บ้านเลขที่: ${member.houseNumber}\n` +
-                `📅 วันหมดอายุ: ${member.memberExpireDate}\n` +
-                `⏳ เหลือ ${member.daysRemaining} วัน\n\n`;
-
-        });
-
-        return ctx.reply(message);
-
-    } catch (error) {
-
-        console.error("❌ Notification test error:");
-        console.error(error);
-
-        return ctx.reply(
-            "❌ เกิดข้อผิดพลาดในการดึงข้อมูลสมาชิก"
-        );
-
-    }
-
-});
-
-// ==============================
 // TEST: ส่งแจ้งเตือนสมาชิก
 // ==============================
 
@@ -806,7 +772,7 @@ bot.command("sendtest", async (ctx) => {
 
     try {
 
-        const members = await findMembersForNotification();
+        const members = await findExpiringMembers();
 
         console.log("========== SEND NOTIFICATION TEST ==========");
 
@@ -833,12 +799,28 @@ bot.command("sendtest", async (ctx) => {
 
 ⏳ เหลือเวลาอีก ${member.daysRemaining} วัน
 
-กรุณาติดต่อผู้ดูแลระบบเพื่อดำเนินการต่ออายุสมาชิก
+⚠️ สมาชิกของคุณใกล้หมดอายุแล้ว
+
+กรุณาดำเนินการต่ออายุสมาชิก
+เพื่อให้สามารถใช้งานระบบได้อย่างต่อเนื่อง
+
+👇 กดปุ่มด้านล่างเพื่อเข้าสู่ระบบ
+และดำเนินการต่ออายุสมาชิก 
             `;
 
             await bot.api.sendMessage({
                 chat_id: member.Telegram_ID,
-                text: message
+                text: message,
+                reply_markup: {
+                    inline_keyboard: [
+                        [
+                            {
+                                text: "🔄 ต่ออายุสมาชิก",
+                                url: "https://smartvillageiot.xyz/frontend/login/login.html"
+                            }
+                        ]
+                    ]
+                }
             });
 
             sentCount++;
@@ -1262,12 +1244,28 @@ cron.schedule("0 9 * * *", async () => {
 
 ⏳ เหลือเวลาอีก ${member.daysRemaining} วัน
 
-กรุณาติดต่อผู้ดูแลระบบเพื่อดำเนินการต่ออายุสมาชิก
+⚠️ สมาชิกของคุณใกล้หมดอายุแล้ว
+
+กรุณาดำเนินการต่ออายุสมาชิก
+เพื่อให้สามารถใช้งานระบบได้อย่างต่อเนื่อง
+
+👇 กดปุ่มด้านล่างเพื่อเข้าสู่ระบบ
+และดำเนินการต่ออายุสมาชิก
             `;
 
             await bot.api.sendMessage({
                 chat_id: member.Telegram_ID,
-                text: message
+                text: message,
+                reply_markup: {
+                    inline_keyboard: [
+                        [
+                            {
+                                text: "🔄 ต่ออายุสมาชิก",
+                                url: "https://smartvillageiot.xyz/frontend/login/login.html"
+                            }
+                        ]
+                    ]
+                }
             });
 
             console.log(

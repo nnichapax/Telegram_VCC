@@ -45,6 +45,48 @@ async function findMemberById(memberId) {
     return rows[0] || null;
 }
 
+// ==========================================
+// ตรวจสอบ Generate Key
+// ==========================================
+async function verifyGenerateKey(generateKey, houseNumber) {
+
+    const [rows] = await pool.query(
+        `
+        SELECT
+            id,
+            key_gen,
+            state,
+            houseNumber,
+            timestamp
+        FROM Generate_Keys
+        WHERE key_gen = ?
+            AND houseNumber = ?
+            AND state = 'NON-ACTIVE'
+        LIMIT 1
+        `,
+        [generateKey, houseNumber]
+    );
+
+    return rows[0] || null;
+}
+
+// ==========================================
+// เปลี่ยนสถานะ Generate Key เป็นใช้งานแล้ว
+// ==========================================
+async function useGenerateKey(generateKey) {
+
+    const [result] = await pool.query(
+        `
+        UPDATE Generate_Keys
+        SET state = 'ACTIVE'
+        WHERE key_gen = ?
+            AND state = 'NON-ACTIVE'
+        `,
+        [generateKey]
+    );
+
+    return result;
+}
 
 // ==========================================
 // ค้นหาสมาชิกด้วย Telegram ID
@@ -278,6 +320,8 @@ async function getMemberReport() {
 module.exports = {
     pool,
     findMemberById,
+    verifyGenerateKey,
+    useGenerateKey,
     findMemberByTelegramId,
     linkTelegram,
     updateNotificationStatus,

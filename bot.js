@@ -4,6 +4,8 @@ const cron = require("node-cron");
 
 const {
     findMemberById,
+    verifyGenerateKey,
+    useGenerateKey,
     findMemberByTelegramId,
     linkTelegram,
     updateNotificationStatus,
@@ -45,9 +47,9 @@ function showMainMenu(ctx) {
 
     return ctx.reply(
         `
-🤖 ระบบจัดการสมาชิก
+- ระบบจัดการสมาชิก -
 
-👋 ยินดีต้อนรับเข้าสู่ระบบ
+ยินดีต้อนรับเข้าสู่ระบบ
 
 ระบบสำหรับจัดการสมาชิก
 และแจ้งเตือนวันหมดอายุสมาชิก
@@ -95,9 +97,9 @@ bot.command("start", (ctx) => {
 
         return ctx.reply(
             `
-🛠️ ระบบจัดการสมาชิก — Admin
+ระบบจัดการสมาชิก — Admin
 
-👋 ยินดีต้อนรับผู้ดูแลระบบ
+ยินดีต้อนรับผู้ดูแลระบบ
 
 กรุณาเลือกเมนูที่ต้องการ
             `,
@@ -147,7 +149,7 @@ bot.hears("👤 ข้อมูลของฉัน", async (ctx) => {
         if (!member) {
 
             return ctx.reply(`
-⚠️ ยังไม่ได้ลงทะเบียน Telegram
+!! ยังไม่ได้ลงทะเบียน Telegram !!
 
 กรุณากด
 
@@ -159,28 +161,28 @@ bot.hears("👤 ข้อมูลของฉัน", async (ctx) => {
         }
 
         return ctx.reply(`
-👤 ข้อมูลสมาชิก
+ข้อมูลสมาชิก
 
-🆔 รหัสสมาชิก: ${member.id}
+รหัสสมาชิก: ${member.id}
 
-👤 ชื่อ: ${member.ownerName}
+ชื่อ: ${member.ownerName}
 
-🏠 บ้านเลขที่: ${member.houseNumber}
+บ้านเลขที่: ${member.houseNumber}
 
-🟢 สถานะ: ${member.role}
+สถานะ: ${member.role}
 
-📅 วันที่เริ่มสมาชิก: ${member.memberStartDate}
+วันที่เริ่มสมาชิก: ${member.memberStartDate}
 
-📅 วันหมดอายุ: ${member.memberExpireDate}
+วันหมดอายุ: ${member.memberExpireDate}
         `);
 
     } catch (error) {
 
-        console.error("❌ Error getting member information:");
+        console.error("Error getting member information:");
         console.error(error);
 
         return ctx.reply(`
-❌ ไม่สามารถดึงข้อมูลสมาชิกได้
+ไม่สามารถดึงข้อมูลสมาชิกได้
 
 กรุณาลองใหม่อีกครั้ง
         `);
@@ -206,7 +208,7 @@ bot.hears("📅 วันหมดอายุสมาชิก", async (ctx) =
         if (!member) {
 
             return ctx.reply(`
-⚠️ ยังไม่ได้ลงทะเบียน Telegram
+!! ยังไม่ได้ลงทะเบียน Telegram !!
 
 กรุณากด
 
@@ -267,29 +269,29 @@ bot.hears("📅 วันหมดอายุสมาชิก", async (ctx) =
             });
 
         return ctx.reply(`
-📅 วันหมดอายุสมาชิก
+วันหมดอายุสมาชิก
 
-👤 ชื่อ: ${member.ownerName}
+ชื่อ: ${member.ownerName}
 
-🆔 รหัสสมาชิก: ${member.id}
+รหัสสมาชิก: ${member.id}
 
-🏠 บ้านเลขที่: ${member.houseNumber}
+บ้านเลขที่: ${member.houseNumber}
 
-📅 วันหมดอายุ:
+วันหมดอายุ:
 ${formattedDate}
 
 ${status}
 
-⏳ ${message}
+${message}
         `);
 
     } catch (error) {
 
-        console.error("❌ Error getting expiration date:");
+        console.error("Error getting expiration date:");
         console.error(error);
 
         return ctx.reply(`
-❌ ไม่สามารถตรวจสอบวันหมดอายุได้
+ไม่สามารถตรวจสอบวันหมดอายุได้
 
 กรุณาลองใหม่อีกครั้ง
         `);
@@ -314,7 +316,7 @@ bot.hears("🔔 การแจ้งเตือน", async (ctx) => {
         if (!member) {
 
             return ctx.reply(`
-⚠️ ยังไม่ได้ลงทะเบียน Telegram
+!! ยังไม่ได้ลงทะเบียน Telegram !!
 
 กรุณากด
 
@@ -340,11 +342,11 @@ bot.hears("🔔 การแจ้งเตือน", async (ctx) => {
         if (isEnabled) {
 
             return ctx.reply(`
-🔔 การแจ้งเตือน
+การแจ้งเตือน
 
-👤 สมาชิก: ${member.ownerName}
+สมาชิก: ${member.ownerName}
 
-🟢 สถานะ: เปิดใช้งาน
+สถานะ: เปิดใช้งาน
 
 ระบบจะแจ้งเตือนก่อนสมาชิกหมดอายุ
 
@@ -371,9 +373,9 @@ bot.hears("🔔 การแจ้งเตือน", async (ctx) => {
         } else {
 
             return ctx.reply(`
-🔔 การแจ้งเตือน
+การแจ้งเตือน
 
-👤 สมาชิก: ${member.ownerName}
+สมาชิก: ${member.ownerName}
 
 🔴 สถานะ: ปิดใช้งาน
 
@@ -399,11 +401,11 @@ bot.hears("🔔 การแจ้งเตือน", async (ctx) => {
 
     } catch (error) {
 
-        console.error("❌ Error getting notification status:");
+        console.error("Error getting notification status:");
         console.error(error);
 
         return ctx.reply(`
-❌ ไม่สามารถตรวจสอบสถานะการแจ้งเตือนได้
+ไม่สามารถตรวจสอบสถานะการแจ้งเตือนได้
 กรุณาลองใหม่อีกครั้ง
         `);
 
@@ -421,7 +423,7 @@ bot.hears("ℹ️ เกี่ยวกับระบบ", (ctx) => {
     return ctx.reply(`
 ℹ️ เกี่ยวกับระบบ
 
-🤖 ระบบจัดการสมาชิก
+- ระบบจัดการสมาชิก -
 
 ระบบนี้ใช้สำหรับ
 
@@ -467,10 +469,10 @@ bot.hears("👥 สมาชิกทั้งหมด", async (ctx) => {
         const members = await findAllMembers();
 
         if (members.length === 0) {
-            return ctx.reply("👥 ยังไม่มีข้อมูลสมาชิก");
+            return ctx.reply("ยังไม่มีข้อมูลสมาชิก");
         }
 
-        let message = "👥 สมาชิกทั้งหมด\n\n";
+        let message = "สมาชิกทั้งหมด\n\n";
 
         members.forEach((member, index) => {
 
@@ -494,9 +496,9 @@ bot.hears("👥 สมาชิกทั้งหมด", async (ctx) => {
 
             message +=
                 `${index + 1}. ${member.ownerName}\n` +
-                `    🆔 ${member.id}\n` +
-                `    🏠 บ้านเลขที่ ${member.houseNumber}\n` +
-                `    📅 หมดอายุ ${member.memberExpireDate}\n` +
+                `    ${member.id}\n` +
+                `    บ้านเลขที่ ${member.houseNumber}\n` +
+                `    หมดอายุ ${member.memberExpireDate}\n` +
                 `    ${status}\n\n`;
         });
 
@@ -504,11 +506,11 @@ bot.hears("👥 สมาชิกทั้งหมด", async (ctx) => {
 
     } catch (error) {
 
-        console.error("❌ Find all members error:");
+        console.error("Find all members error:");
         console.error(error);
 
         return ctx.reply(
-            "❌ เกิดข้อผิดพลาดในการดึงข้อมูลสมาชิก"
+            "เกิดข้อผิดพลาดในการดึงข้อมูลสมาชิก"
         );
     }
 
@@ -527,12 +529,12 @@ bot.hears("📅 สมาชิกใกล้หมดอายุ", async (ctx
 
         if (members.length === 0) {
             return ctx.reply(
-                "📅 สมาชิกใกล้หมดอายุ\n\n" +
-                "✅ ขณะนี้ไม่มีสมาชิกที่ใกล้หมดอายุภายใน 30 วัน"
+                "สมาชิกใกล้หมดอายุ\n\n" +
+                "ขณะนี้ไม่มีสมาชิกที่ใกล้หมดอายุภายใน 30 วัน"
             );
         }
 
-        let message = "📅 สมาชิกใกล้หมดอายุ\n\n";
+        let message = "สมาชิกใกล้หมดอายุ\n\n";
 
         members.forEach((member, index) => {
 
@@ -544,21 +546,21 @@ bot.hears("📅 สมาชิกใกล้หมดอายุ", async (ctx
 
             message +=
                 `${status} ${member.ownerName}\n` +
-                `🆔 รหัสสมาชิก: ${member.id}\n` +
-                `🏠 บ้านเลขที่: ${member.houseNumber}\n` +
-                `📅 วันหมดอายุ: ${member.memberExpireDate}\n` +
-                `⏳ เหลือ: ${member.daysRemaining} วัน\n\n`;
+                `รหัสสมาชิก: ${member.id}\n` +
+                `บ้านเลขที่: ${member.houseNumber}\n` +
+                `วันหมดอายุ: ${member.memberExpireDate}\n` +
+                `เหลือ: ${member.daysRemaining} วัน\n\n`;
         });
 
         return ctx.reply(message);
 
     } catch (error) {
 
-        console.error("❌ Find expiring members error:");
+        console.error("Find expiring members error:");
         console.error(error);
 
         return ctx.reply(
-            "❌ เกิดข้อผิดพลาดในการดึงข้อมูลสมาชิกใกล้หมดอายุ"
+            "เกิดข้อผิดพลาดในการดึงข้อมูลสมาชิกใกล้หมดอายุ"
         );
     }
 
@@ -577,8 +579,8 @@ bot.hears("🔔 ส่งการแจ้งเตือน", async (ctx) => {
 
         if (members.length === 0) {
             return ctx.reply(
-                "🔔 ส่งการแจ้งเตือน\n\n" +
-                "✅ ไม่มีสมาชิกที่ต้องแจ้งเตือนในขณะนี้"
+                "ส่งการแจ้งเตือน\n\n" +
+                "ไม่มีสมาชิกที่ต้องแจ้งเตือนในขณะนี้"
             );
         }
 
@@ -592,20 +594,20 @@ bot.hears("🔔 ส่งการแจ้งเตือน", async (ctx) => {
                 const message = `
 🔔 แจ้งเตือนวันหมดอายุสมาชิก
 
-👤 ชื่อ: ${member.ownerName}
-🆔 รหัสสมาชิก: ${member.id}
-🏠 บ้านเลขที่: ${member.houseNumber}
+ชื่อ: ${member.ownerName}
+รหัสสมาชิก: ${member.id}
+บ้านเลขที่: ${member.houseNumber}
 
-📅 วันหมดอายุ: ${member.memberExpireDate}
+วันหมดอายุ: ${member.memberExpireDate}
 
-⏳ เหลือเวลาอีก ${member.daysRemaining} วัน
+เหลือเวลาอีก ${member.daysRemaining} วัน
 
-⚠️ สมาชิกของคุณใกล้หมดอายุแล้ว
+!! สมาชิกของคุณใกล้หมดอายุแล้ว !!
 
 กรุณาดำเนินการต่ออายุสมาชิก
 เพื่อให้สามารถใช้งานระบบได้อย่างต่อเนื่อง
 
-👇 กดปุ่มด้านล่างเพื่อเข้าสู่ระบบ
+กดปุ่มด้านล่างเพื่อเข้าสู่ระบบ
 และดำเนินการต่ออายุสมาชิก
 `;
 
@@ -635,7 +637,7 @@ bot.hears("🔔 ส่งการแจ้งเตือน", async (ctx) => {
                 failedCount++;
 
                 console.error(
-                    `❌ ส่งให้ ${member.ownerName} ไม่สำเร็จ`
+                    `ส่งให้ ${member.ownerName} ไม่สำเร็จ`
                 );
 
                 console.error(error);
@@ -643,18 +645,18 @@ bot.hears("🔔 ส่งการแจ้งเตือน", async (ctx) => {
         }
 
         return ctx.reply(
-            `🔔 ส่งการแจ้งเตือนเสร็จสิ้น\n\n` +
-            `✅ ส่งสำเร็จ: ${sentCount} คน\n` +
-            `❌ ส่งไม่สำเร็จ: ${failedCount} คน`
+            `ส่งการแจ้งเตือนเสร็จสิ้น\n\n` +
+            `ส่งสำเร็จ: ${sentCount} คน\n` +
+            `ส่งไม่สำเร็จ: ${failedCount} คน`
         );
 
     } catch (error) {
 
-        console.error("❌ Admin notification error:");
+        console.error("Admin notification error:");
         console.error(error);
 
         return ctx.reply(
-            "❌ เกิดข้อผิดพลาดในการส่งการแจ้งเตือน"
+            "เกิดข้อผิดพลาดในการส่งการแจ้งเตือน"
         );
     }
 
@@ -674,7 +676,7 @@ bot.hears("📊 รายงานสมาชิก", async (ctx) => {
         return ctx.reply(`
 📊 รายงานสมาชิก
 
-👥 สมาชิกทั้งหมด: ${report.totalMembers} คน
+สมาชิกทั้งหมด: ${report.totalMembers} คน
 
 🟢 สมาชิกปกติ: ${report.activeMembers - report.expiringMembers} คน
 
@@ -689,11 +691,11 @@ bot.hears("📊 รายงานสมาชิก", async (ctx) => {
 
     } catch (error) {
 
-        console.error("❌ Member report error:");
+        console.error("Member report error:");
         console.error(error);
 
         return ctx.reply(
-            "❌ เกิดข้อผิดพลาดในการสร้างรายงานสมาชิก"
+            "เกิดข้อผิดพลาดในการสร้างรายงานสมาชิก"
         );
     }
 
@@ -721,13 +723,13 @@ bot.hears("📝 ลงทะเบียน Telegram", async (ctx) => {
         if (existingMember) {
 
             return ctx.reply(`
-⚠️ Telegram นี้ลงทะเบียนไว้แล้ว
+!! Telegram นี้ลงทะเบียนไว้แล้ว !!
 
-👤 ชื่อ: ${existingMember.ownerName}
+ชื่อ: ${existingMember.ownerName}
 
-🆔 รหัสสมาชิก: ${existingMember.id}
+รหัสสมาชิก: ${existingMember.id}
 
-🏠 บ้านเลขที่: ${existingMember.houseNumber}
+บ้านเลขที่: ${existingMember.houseNumber}
 
 หากต้องการเปลี่ยนสมาชิก
 กรุณาติดต่อผู้ดูแลระบบ
@@ -735,27 +737,25 @@ bot.hears("📝 ลงทะเบียน Telegram", async (ctx) => {
 
         }
 
-        registeringUsers.set(telegramId, true);
+        registeringUsers.set(telegramId, "waiting_member_id");
 
         return ctx.reply(`
-📝 ลงทะเบียน Telegram
+ลงทะเบียน Telegram
 
 กรุณากรอกรหัสสมาชิกของคุณ
 
-ตัวอย่าง:
+ตัวอย่าง: 8001
 
-8001
-
-💡 รหัสสมาชิกคือ ID ที่อยู่ในระบบสมาชิก
-        `);
+รหัสสมาชิกคือ ID ที่อยู่ในระบบสมาชิก
+`);
 
     } catch (error) {
 
-        console.error("❌ Registration start error:");
+        console.error("Registration start error:");
         console.error(error);
 
         return ctx.reply(`
-❌ ไม่สามารถตรวจสอบข้อมูลการลงทะเบียนได้
+ไม่สามารถตรวจสอบข้อมูลการลงทะเบียนได้
 
 กรุณาลองใหม่อีกครั้ง
         `);
@@ -765,7 +765,7 @@ bot.hears("📝 ลงทะเบียน Telegram", async (ctx) => {
 });
 
 // ==============================
-// รับรหัสสมาชิก
+// รับข้อมูลการลงทะเบียน
 // ==============================
 
 bot.on("message", async (ctx) => {
@@ -777,116 +777,170 @@ bot.on("message", async (ctx) => {
         return;
     }
 
-    // ถ้าไม่ได้อยู่ในขั้นตอนลงทะเบียน ไม่ต้องทำอะไร
+    // ตรวจสอบว่ากำลังอยู่ในขั้นตอนลงทะเบียนหรือไม่
     if (!registeringUsers.has(telegramId)) {
         return;
     }
 
-    const memberId = ctx.message?.text?.trim();
+    const step = registeringUsers.get(telegramId);
+    const input = ctx.message?.text?.trim();
 
-    if (!memberId) {
+    if (!input) {
         return;
     }
 
     try {
 
         // ==========================================
-        // ค้นหาสมาชิกจาก TiDB
+        // ขั้นตอนที่ 1: รับ User ID
         // ==========================================
 
-        const member = await findMemberById(memberId);
+        if (step === "waiting_member_id") {
 
-        // ไม่พบสมาชิก
-        if (!member) {
+            const memberId = input;
 
-            return ctx.reply(`
-❌ ไม่พบข้อมูลสมาชิก
+            const member = await findMemberById(memberId);
+
+            // ไม่พบสมาชิก
+            if (!member) {
+
+                return ctx.reply(`
+ไม่พบข้อมูลสมาชิก
 
 รหัสสมาชิก: ${memberId}
 
 กรุณาตรวจสอบรหัสสมาชิกอีกครั้ง
-            `);
+`);
+            }
 
-        }
+            // ตรวจสอบว่าสมาชิกนี้ผูก Telegram อื่นอยู่แล้วหรือยัง
+            if (member.Telegram_ID) {
 
-        // ==========================================
-        // ตรวจสอบว่าสมาชิกนี้ผูก Telegram อื่นอยู่แล้วหรือยัง
-        // ==========================================
+                registeringUsers.delete(telegramId);
 
-        if (member.Telegram_ID) {
+                return ctx.reply(`
+สมาชิกนี้ลงทะเบียน Telegram ไว้แล้ว
 
-            return ctx.reply(`
-⚠️ สมาชิกนี้ลงทะเบียน Telegram ไว้แล้ว
-
-👤 ชื่อ: ${member.ownerName}
-
-🆔 รหัสสมาชิก: ${member.id}
-
-🏠 บ้านเลขที่: ${member.houseNumber}
+ชื่อ: ${member.ownerName}
+รหัสสมาชิก: ${member.id}
+บ้านเลขที่: ${member.houseNumber}
 
 หากเป็นเจ้าของบัญชี
 กรุณาติดต่อผู้ดูแลระบบ
-            `);
-
-        }
-
-        // ==========================================
-        // เก็บข้อมูลรอยืนยัน
-        // ==========================================
-
-        pendingMembers.set(telegramId, member);
-
-        return ctx.reply(`
-🔎 พบข้อมูลสมาชิก
-
-👤 ชื่อ: ${member.ownerName}
-
-🆔 รหัสสมาชิก: ${member.id}
-
-🏠 บ้านเลขที่: ${member.houseNumber}
-
-🟢 สถานะ: ${member.role}
-
-📅 วันที่เริ่มสมาชิก: ${member.memberStartDate}
-
-📅 วันหมดอายุ: ${member.memberExpireDate}
-
-กรุณาตรวจสอบข้อมูล
-        `, {
-
-            reply_markup: {
-
-                inline_keyboard: [
-
-                    [
-                        {
-                            text: "✅ ยืนยัน",
-                            callback_data: "confirm_register"
-                        },
-
-                        {
-                            text: "❌ ยกเลิก",
-                            callback_data: "cancel_register"
-                        }
-                    ]
-
-                ]
-
+`);
             }
 
-        });
+            // เก็บข้อมูลสมาชิกไว้สำหรับขั้นตอนตรวจ GK
+            pendingMembers.set(telegramId, member);
+
+            // เปลี่ยนไปขั้นตอนรอ GK
+            registeringUsers.set(telegramId, "waiting_generate_key");
+
+            return ctx.reply(`
+พบข้อมูลสมาชิก
+
+ชื่อ: ${member.ownerName}
+รหัสสมาชิก: ${member.id}
+บ้านเลขที่: ${member.houseNumber}
+
+กรุณากรอก Generate Key (GK)
+`);
+        }
+
+
+        // ==========================================
+        // ขั้นตอนที่ 2: รับ GK
+        // ==========================================
+
+        if (step === "waiting_generate_key") {
+
+            const generateKey = input.toUpperCase();
+
+            const member = pendingMembers.get(telegramId);
+
+            // ไม่พบข้อมูลสมาชิกที่กำลังลงทะเบียน
+            if (!member) {
+
+                registeringUsers.delete(telegramId);
+
+                return ctx.reply(`
+ไม่พบข้อมูลการลงทะเบียน
+
+กรุณาเริ่มการลงทะเบียนใหม่
+`);
+            }
+
+            // ตรวจสอบ GK
+            const validKey = await verifyGenerateKey(
+                generateKey,
+                member.houseNumber
+            );
+
+            // GK ไม่ถูกต้อง
+            if (!validKey) {
+
+                return ctx.reply(`
+Generate Key ไม่ถูกต้อง
+
+กรุณาตรวจสอบ GK และลองอีกครั้ง
+`);
+            }
+
+            // เชื่อม Telegram กับสมาชิก
+            await linkTelegram(
+                member.id,
+                telegramId
+            );
+
+            // เปลี่ยน GK เป็นใช้แล้ว
+            const result = await useGenerateKey(generateKey);
+
+            // ตรวจสอบว่ามีการเปลี่ยนสถานะจริง
+            if (result.affectedRows === 0) {
+
+                // กรณีผิดพลาด ป้องกันการลงทะเบียนต่อ
+                return ctx.reply(`
+ไม่สามารถยืนยัน Generate Key ได้
+
+กรุณาลองใหม่อีกครั้ง
+`);
+            }
+
+            console.log("=================================");
+            console.log("Registration successful");
+            console.log("Telegram ID:", telegramId);
+            console.log("Member ID:", member.id);
+            console.log("Owner:", member.ownerName);
+            console.log("House:", member.houseNumber);
+            console.log("Generate Key:", generateKey);
+            console.log("=================================");
+
+            // ล้างสถานะการลงทะเบียน
+            registeringUsers.delete(telegramId);
+            pendingMembers.delete(telegramId);
+
+            return ctx.reply(`
+ลงทะเบียน Telegram สำเร็จ
+
+ชื่อ: ${member.ownerName}
+รหัสสมาชิก: ${member.id}
+บ้านเลขที่: ${member.houseNumber}
+วันหมดอายุ: ${member.memberExpireDate}
+
+บัญชี Telegram เชื่อมต่อกับข้อมูลสมาชิกเรียบร้อยแล้ว
+`);
+        }
 
     } catch (error) {
 
-        console.error("❌ Error finding member:");
+        console.error("Registration error:");
         console.error(error);
 
         return ctx.reply(`
-❌ เกิดข้อผิดพลาดในการค้นหาข้อมูล
+เกิดข้อผิดพลาดในการลงทะเบียน
 
 กรุณาลองใหม่อีกครั้ง
-        `);
-
+`);
     }
 
 });
@@ -947,7 +1001,7 @@ bot.on("callback_query", async (ctx) => {
             return ctx.reply(`
 🔕 ปิดการแจ้งเตือนสำเร็จ
 
-👤 สมาชิก: ${member.ownerName}
+สมาชิก: ${member.ownerName}
 
 🔴 สถานะ: ปิดใช้งาน
 
@@ -1043,95 +1097,6 @@ bot.on("callback_query", async (ctx) => {
 
     }
 
-
-    // ==========================================
-    // ยืนยันการลงทะเบียน
-    // ==========================================
-
-    if (action === "confirm_register") {
-
-        const member = pendingMembers.get(telegramId);
-
-        if (!member) {
-
-            return ctx.answerCallbackQuery({
-                text: "ไม่พบข้อมูลการลงทะเบียน"
-            });
-
-        }
-
-        try {
-
-            await linkTelegram(member.id, telegramId);
-
-            console.log("=================================");
-            console.log("✅ Registration successful");
-            console.log("Telegram ID:", telegramId);
-            console.log("Member ID:", member.id);
-            console.log("Owner:", member.ownerName);
-            console.log("House:", member.houseNumber);
-            console.log("=================================");
-
-            registeringUsers.delete(telegramId);
-            pendingMembers.delete(telegramId);
-
-            await ctx.answerCallbackQuery({
-                text: "ลงทะเบียนสำเร็จ!"
-            });
-
-            return ctx.reply(`
-✅ ลงทะเบียนสำเร็จ!
-
-👤 ชื่อ: ${member.ownerName}
-
-🆔 รหัสสมาชิก: ${member.id}
-
-🏠 บ้านเลขที่: ${member.houseNumber}
-
-📅 วันหมดอายุ: ${member.memberExpireDate}
-
-🎉 บัญชี Telegram ของคุณ
-เชื่อมต่อกับข้อมูลสมาชิกเรียบร้อยแล้ว
-            `);
-
-        } catch (error) {
-
-            console.error("❌ Error linking Telegram:");
-            console.error(error);
-
-            return ctx.answerCallbackQuery({
-                text: "เกิดข้อผิดพลาดในการลงทะเบียน"
-            });
-
-        }
-
-    }
-
-
-    // ==========================================
-    // ยกเลิก
-    // ==========================================
-
-    if (action === "cancel_register") {
-
-        registeringUsers.delete(telegramId);
-        pendingMembers.delete(telegramId);
-
-        await ctx.answerCallbackQuery({
-            text: "ยกเลิกการลงทะเบียนแล้ว"
-        });
-
-        return ctx.reply(`
-❌ ยกเลิกการลงทะเบียนแล้ว
-
-หากต้องการลงทะเบียนใหม่
-กดปุ่ม
-
-📝 ลงทะเบียน Telegram
-        `);
-
-    }
-
 });
 
 // ==========================================
@@ -1151,22 +1116,22 @@ cron.schedule("0 9 * * *", async () => {
         for (const member of members) {
 
             const message = `
-🔔 แจ้งเตือนวันหมดอายุสมาชิก
+แจ้งเตือนวันหมดอายุสมาชิก
 
-👤 ชื่อ: ${member.ownerName}
-🆔 รหัสสมาชิก: ${member.id}
-🏠 บ้านเลขที่: ${member.houseNumber}
+ชื่อ: ${member.ownerName}
+รหัสสมาชิก: ${member.id}
+บ้านเลขที่: ${member.houseNumber}
 
-📅 วันหมดอายุ: ${member.memberExpireDate}
+วันหมดอายุ: ${member.memberExpireDate}
 
-⏳ เหลือเวลาอีก ${member.daysRemaining} วัน
+เหลือเวลาอีก ${member.daysRemaining} วัน
 
-⚠️ สมาชิกของคุณใกล้หมดอายุแล้ว
+!! สมาชิกของคุณใกล้หมดอายุแล้ว !!
 
 กรุณาดำเนินการต่ออายุสมาชิก
 เพื่อให้สามารถใช้งานระบบได้อย่างต่อเนื่อง
 
-👇 กดปุ่มด้านล่างเพื่อเข้าสู่ระบบ
+กดปุ่มด้านล่างเพื่อเข้าสู่ระบบ
 และดำเนินการต่ออายุสมาชิก
             `;
 
@@ -1186,13 +1151,13 @@ cron.schedule("0 9 * * *", async () => {
             });
 
             console.log(
-                `✅ ส่งแจ้งเตือนให้ ${member.ownerName} (${member.Telegram_ID})`
+                `ส่งแจ้งเตือนให้ ${member.ownerName} (${member.Telegram_ID})`
             );
         }
 
     } catch (error) {
 
-        console.error("❌ Auto notification error:");
+        console.error("Auto notification error:");
         console.error(error);
 
     }

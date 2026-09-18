@@ -472,7 +472,8 @@ bot.hears("👥 สมาชิกทั้งหมด", async (ctx) => {
             return ctx.reply("ยังไม่มีข้อมูลสมาชิก");
         }
 
-        let message = "สมาชิกทั้งหมด\n\n";
+        let messages = [];
+        let currentMessage = "สมาชิกทั้งหมด\n\n";
 
         members.forEach((member, index) => {
 
@@ -484,25 +485,48 @@ bot.hears("👥 สมาชิกทั้งหมด", async (ctx) => {
                 diffTime / (1000 * 60 * 60 * 24)
             );
 
-            let status = "🟢 ปกติ";
+            let status = "ปกติ";
 
             if (daysRemaining <= 7 && daysRemaining >= 0) {
-                status = "🟡 ใกล้หมดอายุ";
+                status = "ใกล้หมดอายุ";
             }
 
             if (daysRemaining < 0) {
-                status = "🔴 หมดอายุ";
+                status = "หมดอายุ";
             }
 
-            message +=
+            const memberText =
                 `${index + 1}. ${member.ownerName}\n` +
-                `    ${member.id}\n` +
-                `    บ้านเลขที่ ${member.houseNumber}\n` +
-                `    หมดอายุ ${member.memberExpireDate}\n` +
-                `    ${status}\n\n`;
+                `   รหัสสมาชิก: ${member.id}\n` +
+                `   บ้านเลขที่: ${member.houseNumber}\n` +
+                `   วันหมดอายุ: ${member.memberExpireDate}\n` +
+                `   สถานะ: ${status}\n\n`;
+
+            // ถ้าเพิ่มสมาชิกคนนี้แล้วเกิน 4000 ตัว
+            // ให้ส่งข้อความก้อนปัจจุบันก่อน
+            if ((currentMessage + memberText).length > 4000) {
+
+                messages.push(currentMessage);
+
+                currentMessage = memberText;
+
+            } else {
+
+                currentMessage += memberText;
+
+            }
+
         });
 
-        return ctx.reply(message);
+        // เพิ่มข้อมูลก้อนสุดท้าย
+        if (currentMessage.trim()) {
+            messages.push(currentMessage);
+        }
+
+        // ส่งทีละข้อความ
+        for (const message of messages) {
+            await ctx.reply(message);
+        }
 
     } catch (error) {
 
@@ -515,7 +539,6 @@ bot.hears("👥 สมาชิกทั้งหมด", async (ctx) => {
     }
 
 });
-
 
 // ==============================
 // 📅 สมาชิกใกล้หมดอายุ
